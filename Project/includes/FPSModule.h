@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 
-namespace Game2D
+namespace LunarLander
 {
     class FPSModule
     {

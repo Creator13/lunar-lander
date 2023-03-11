@@ -1,7 +1,7 @@
 ﻿#include "FPSModule.h"
 #include <SDL_timer.h>
 
-using namespace Game2D;
+using namespace LunarLander;
 
 
 FPSModule::FPSModule(const uint32_t updateFrequency)

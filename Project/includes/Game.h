@@ -6,30 +6,37 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-namespace Game2D
+#include "Lander.h"
+
+namespace LunarLander
 {
     class FPSModule;
 }
 
-namespace Game2D
+namespace LunarLander
 {
     class Game
     {
     public:
         Game();
 
+        // Graphics
         void changeSize(float newWidth, float newHeight);
+        void update();
         void draw();
 
+        // Input
         void normalKeys(unsigned char key, int state);
         void specialKeys(int key, int state);
         void mouse(int button, int state, int x, int y);
         void mouseMotion(int x, int y);
 
+        // Font
         void initMtxFont() const;
         void draw_mtxText(float x, float y, const char* fmt, ...);
         void draw_mtxFont(float x, float y, Uint8 c) const;
 
+        // Getters
         [[nodiscard]] float getWidth() const { return width; }
         [[nodiscard]] float getHeight() const { return height; }
 
@@ -40,6 +47,9 @@ namespace Game2D
         uint32_t mouseButton, mouseState;
 
         std::shared_ptr<FPSModule> fpsModule;
+
+        // Objects
+        Lander lander;
 
         char (*mtxFont)[7][5];
     };

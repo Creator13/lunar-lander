@@ -1,11 +1,10 @@
 #include "Game.h"
 
-using namespace Game2D;
+using namespace LunarLander;
 
 Game game;
 
 SDL_Window* window;
-
 
 static void initAttributes()
 {
@@ -16,7 +15,6 @@ static void initAttributes()
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);//Depth Buffer 24-bit
 }
-
 
 static void createSurface()
 {
@@ -30,7 +28,6 @@ static void createSurface()
     SDL_GL_CreateContext(window);
     SDL_GL_SetSwapInterval(0);//Enable Vsync
 }
-
 
 static void mainLoop()
 {
@@ -92,16 +89,16 @@ static void mainLoop()
             }
         }
 
+        game.update();
+        
         game.draw();
         SDL_GL_SwapWindow(window);
         SDL_Delay(8);
     }
 }
 
-
 int main(int argc, char* argv[])
 {
-    
     createSurface();
     game.changeSize(game.getWidth(), game.getHeight());
     glClearColor(0.f, 0.f, 0.2f, 1.f);

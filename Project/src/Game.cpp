@@ -7,12 +7,12 @@
 
 #include "FPSModule.h"
 
-using namespace Game2D;
+using namespace LunarLander;
 
 Game::Game()
 {
     fpsModule = std::make_shared<FPSModule>(FPSModule(10));
-    
+
     mtxFont = new char[128][7][5];
     initMtxFont();
 
@@ -22,8 +22,9 @@ Game::Game()
     mouseX = mouseY = 0;
     mouseMotionX = mouseMotionY = 0;
     mouseButton = mouseState = 0;
-}
 
+    lander = Lander();
+}
 
 void Game::changeSize(const float newWidth, const float newHeight)
 {
@@ -43,36 +44,41 @@ void Game::changeSize(const float newWidth, const float newHeight)
     glLoadIdentity();
 }
 
+void Game::update()
+{
+    lander.update(fpsModule->getDeltaTime());
+}
 
 void Game::draw(void)
 {
     fpsModule->tick();
-    
+
     // Clear
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 
     // Geometry
-    glLineWidth(3);
-    glPointSize(10);
-
-    const int method[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_POLYGON};
-
-    for (int i = 0; i < 5; i++)
-    {
-        glBegin(method[i]);
-        const float dx = 200 + 220 * static_cast<float>(i);
-        constexpr float dy = 350;
-        glColor3ub(255, 0, 0);
-        glVertex3f(-50 + dx, -50 + dy, 0);
-        glColor3ub(127, 127, 0);
-        glVertex3f(-50 + dx, 50 + dy, 0);
-        glColor3ub(0, 255, 0);
-        glVertex3f(50 + dx, 50 + dy, 0);
-        glColor3ub(0, 0, 255);
-        glVertex3f(50 + dx, -50 + dy, 0);
-        glEnd();
-    }
+    // glLineWidth(3);
+    // glPointSize(10);
+    //
+    // const int method[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_POLYGON};
+    //
+    // for (int i = 0; i < 5; i++)
+    // {
+    //     glBegin(method[i]);
+    //     const float dx = 200 + 220 * static_cast<float>(i);
+    //     constexpr float dy = 350;
+    //     glColor3ub(255, 0, 0);
+    //     glVertex3f(-50 + dx, -50 + dy, 0);
+    //     glColor3ub(127, 127, 0);
+    //     glVertex3f(-50 + dx, 50 + dy, 0);
+    //     glColor3ub(0, 255, 0);
+    //     glVertex3f(50 + dx, 50 + dy, 0);
+    //     glColor3ub(0, 0, 255);
+    //     glVertex3f(50 + dx, -50 + dy, 0);
+    //     glEnd();
+    // }
+    lander.draw();
 
     // Text
     const float textXPos = width - 300;
@@ -97,13 +103,11 @@ void Game::draw(void)
     // printf("Tick: %d | Frametime: %.2fms | FPS: %2.0f\n", fpsModule->getCurrentFrame(), fpsModule->getFrameTime(), fpsModule->getFPS());
 }
 
-
 void Game::normalKeys(const unsigned char key, int state)
 {
     if (key >= SDLK_0 && key <= SDLK_9) {}
     if (key == SDLK_RETURN) {}//Return
 }
-
 
 void Game::specialKeys(const int key, int state)
 {
@@ -113,7 +117,6 @@ void Game::specialKeys(const int key, int state)
     if (key == SDLK_DOWN) {}
 }
 
-
 void Game::mouse(const int button, const int state, const int x, const int y)
 {
     mouseButton = button;//SDL_BUTTON_LEFT/SDL_BUTTON_MIDDLE/SDL_BUTTON_RIGHT
@@ -122,13 +125,11 @@ void Game::mouse(const int button, const int state, const int x, const int y)
     mouseY = y;
 }
 
-
 void Game::mouseMotion(const int x, const int y)
 {
     mouseMotionX = x;
     mouseMotionY = y;
 }
-
 
 // Font
 void Game::initMtxFont() const
@@ -204,7 +205,6 @@ void Game::initMtxFont() const
     }
 }
 
-
 void Game::draw_mtxText(const float x, const float y, const char* fmt, ...)
 {
     glPushMatrix();
@@ -236,7 +236,6 @@ void Game::draw_mtxText(const float x, const float y, const char* fmt, ...)
 
     glPopMatrix();
 }
-
 
 void inline Game::draw_mtxFont(const float x, const float y, const Uint8 c) const
 {
