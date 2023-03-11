@@ -10,7 +10,7 @@ class Game
 public:
     Game();
 
-    void changeSize(int w, int h);
+    void changeSize(float newWidth, float newHeight);
     void draw();
 
     void normalKeys(unsigned char key, int state);
@@ -18,9 +18,9 @@ public:
     void mouse(int button, int state, int x, int y);
     void mouseMotion(int x, int y);
 
-    void initMtxFont();
+    void initMtxFont() const;
     void draw_mtxText(float x, float y, const char* fmt, ...);
-    void draw_mtxFont(float x, float y, Uint8 c);
+    void draw_mtxFont(float x, float y, Uint8 c) const;
 
     [[nodiscard]] float getWidth() const { return width; }
     [[nodiscard]] float getHeight() const { return height; }

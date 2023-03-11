@@ -23,7 +23,7 @@ static void createSurface()
     window = SDL_CreateWindow("GFX",
                                SDL_WINDOWPOS_UNDEFINED,
                                SDL_WINDOWPOS_UNDEFINED,
-                               game.getWidth(), game.getHeight(),
+                               static_cast<int>(game.getWidth()), static_cast<int>(game.getHeight()),
                                SDL_WINDOW_OPENGL);
     SDL_GL_CreateContext(window);
 }
@@ -71,7 +71,7 @@ static void mainLoop()
 
                     if (key < 128)
                     {
-                        game.normalKeys(key, state);
+                        game.normalKeys(static_cast<unsigned char>(key), state);
                     }
                     else
                     {

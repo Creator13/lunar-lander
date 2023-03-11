@@ -2,6 +2,7 @@
 //  Template for use in the course:
 //  Linear Algebra, Trigonometry and Geometry, 7.5 c
 //  Uppsala University, Sweden
+
 #include "Game.h"
 
 
@@ -9,22 +10,32 @@ Game::Game()
 {
     mtxFont = new char[128][7][5];
     initMtxFont();
+
     counter = 0;
-    width = 1280, height = 720.f;
+    width = 1280;
+    height = 720;
     mouseX = mouseY = 0;
+    mouseMotionX = mouseMotionY = 0;
     mouseButton = mouseState = 0;
 }
 
 
-void Game::changeSize(int w, int h)
+void Game::changeSize(const float newWidth, const float newHeight)
 {
-    width = w, height = h;
-    glViewport(0, 0, width, height); // Reset Viewport
+    width = newWidth;
+    height = newHeight;
+
+    // Reset Viewport
+    glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity(); // Reset The Projection Matrix
-    glOrtho(0.0f, width, height, 0.0f, -1.0f, .0f); // Create Ortho View (0,0 At Top Left)
+
+    // Reset The Projection Matrix
+    glLoadIdentity();
+    glOrtho(0.0, width, height, 0.0, -1.0, .0); // Create Ortho View (0,0 At Top Left)
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();  // Reset The Modelview Matrix
+
+    // Reset The ModelView Matrix
+    glLoadIdentity();
 }
 
 
@@ -34,17 +45,17 @@ void Game::draw(void)
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 
-    // -Geometry
+    // Geometry
     glLineWidth(3);
     glPointSize(10);
 
-    int method[] = {GL_POINTS,GL_LINES,GL_LINE_STRIP,GL_LINE_LOOP,GL_POLYGON};
+    const int method[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_POLYGON};
 
     for (int i = 0; i < 5; i++)
     {
         glBegin(method[i]);
-        float dx = 200 + 220 * i;
-        float dy = 350;
+        const float dx = 200 + 220 * static_cast<float>(i);
+        constexpr float dy = 350;
         glColor3ub(255, 0, 0);
         glVertex3f(-50 + dx, -50 + dy, 0);
         glColor3ub(127, 127, 0);
@@ -57,7 +68,7 @@ void Game::draw(void)
     }
 
     // Text
-    int a = width - 300;
+    const float a = width - 300;
     glColor3ub(255, 0, 0);
     draw_mtxText(a, height - 4 * 24, "X = %4d  Y = %4d",
                  mouseX, mouseY);
@@ -72,14 +83,14 @@ void Game::draw(void)
 }
 
 
-void Game::normalKeys(unsigned char key, int state)
+void Game::normalKeys(const unsigned char key, int state)
 {
     if (key >= SDLK_0 && key <= SDLK_9) {}
     if (key == SDLK_RETURN) {}//Return
 }
 
 
-void Game::specialKeys(int key, int state)
+void Game::specialKeys(const int key, int state)
 {
     if (key == SDLK_LEFT) {}
     if (key == SDLK_RIGHT) {}
@@ -88,7 +99,7 @@ void Game::specialKeys(int key, int state)
 }
 
 
-void Game::mouse(int button, int state, int x, int y)
+void Game::mouse(const int button, const int state, const int x, const int y)
 {
     mouseButton = button;//SDL_BUTTON_LEFT/SDL_BUTTON_MIDDLE/SDL_BUTTON_RIGHT
     mouseState = state;//SDL_PRESSED/SDL_RELEASED
@@ -97,15 +108,15 @@ void Game::mouse(int button, int state, int x, int y)
 }
 
 
-void Game::mouseMotion(int x, int y)
+void Game::mouseMotion(const int x, const int y)
 {
     mouseMotionX = x;
     mouseMotionY = y;
-};
+}
 
-// ###
+
 // Font
-void Game::initMtxFont()
+void Game::initMtxFont() const
 {
     for (int i = 0; i < 128; i++)
     {
@@ -118,7 +129,7 @@ void Game::initMtxFont()
         }
     }
 
-    const char F0[] =
+    constexpr char fontMap[] =
         "00000" "00000" "00000" "11111" "00000" "00000" "00000"//-
         "00000" "00000" "00000" "00000" "00000" "01100" "01100"//.
         "11111" "11111" "11111" "11111" "11111" "11111" "11111"//
@@ -172,14 +183,14 @@ void Game::initMtxFont()
         {
             for (int k = 0; k < 5; k++)
             {
-                mtxFont[i + 45][j][k] = F0[35 * i + 5 * j + k];
+                mtxFont[i + 45][j][k] = fontMap[35 * i + 5 * j + k];
             }
         }
     }
 }
 
 
-void Game::draw_mtxText(float x, float y, const char* fmt, ...)
+void Game::draw_mtxText(const float x, const float y, const char* fmt, ...)
 {
     glPushMatrix();
     glLoadIdentity();
@@ -187,7 +198,7 @@ void Game::draw_mtxText(float x, float y, const char* fmt, ...)
     char text[256];
     va_list ap;
 
-    if (fmt == NULL) return;
+    if (fmt == nullptr) return;
 
     va_start(ap, fmt);
 #ifdef _WIN32 //32-bit and 64-bit Windows
@@ -212,7 +223,7 @@ void Game::draw_mtxText(float x, float y, const char* fmt, ...)
 }
 
 
-void inline Game::draw_mtxFont(float x, float y, Uint8 c)
+void inline Game::draw_mtxFont(const float x, const float y, const Uint8 c) const
 {
     if (c == ' ') return;
 
@@ -221,7 +232,8 @@ void inline Game::draw_mtxFont(float x, float y, Uint8 c)
         for (int n = 0; n < 5; n++)
         {
             if (mtxFont[c][m][n] == '0') continue;
-            glVertex2f(x + 2 * n, y + 2 * m);
+            
+            glVertex2f(x + 2 * static_cast<GLfloat>(n), y + 2 * static_cast<GLfloat>(m));
         }
     }
 }
