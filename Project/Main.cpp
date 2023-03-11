@@ -1,4 +1,6 @@
 #include "Game.h"
+using namespace Game2D;
+
 Game game;
 
 SDL_Window* window;
@@ -12,7 +14,6 @@ static void initAttributes()
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);//Depth Buffer 24-bit
-    SDL_GL_SetSwapInterval(1);//Enable Vsync
 }
 
 
@@ -21,11 +22,12 @@ static void createSurface()
     SDL_Init(SDL_INIT_EVERYTHING);
     initAttributes(); //Context Attr
     window = SDL_CreateWindow("GFX",
-                               SDL_WINDOWPOS_UNDEFINED,
-                               SDL_WINDOWPOS_UNDEFINED,
-                               static_cast<int>(game.getWidth()), static_cast<int>(game.getHeight()),
-                               SDL_WINDOW_OPENGL);
+                              SDL_WINDOWPOS_UNDEFINED,
+                              SDL_WINDOWPOS_UNDEFINED,
+                              static_cast<int>(game.getWidth()), static_cast<int>(game.getHeight()),
+                              SDL_WINDOW_OPENGL);
     SDL_GL_CreateContext(window);
+    SDL_GL_SetSwapInterval(0);//Enable Vsync
 }
 
 

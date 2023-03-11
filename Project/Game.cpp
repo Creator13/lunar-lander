@@ -5,13 +5,18 @@
 
 #include "Game.h"
 
+#include "FPSModule.h"
+
+using namespace Game2D;
 
 Game::Game()
 {
+    fpsModule = std::make_shared<FPSModule>(FPSModule(10));
+    
     mtxFont = new char[128][7][5];
     initMtxFont();
 
-    counter = 0;
+    frameCounter = 0;
     width = 1280;
     height = 720;
     mouseX = mouseY = 0;
@@ -41,6 +46,8 @@ void Game::changeSize(const float newWidth, const float newHeight)
 
 void Game::draw(void)
 {
+    fpsModule->tick();
+    
     // Clear
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
@@ -68,18 +75,26 @@ void Game::draw(void)
     }
 
     // Text
-    const float a = width - 300;
+    const float textXPos = width - 300;
     glColor3ub(255, 0, 0);
-    draw_mtxText(a, height - 4 * 24, "X = %4d  Y = %4d",
+    draw_mtxText(textXPos, height - 5 * 24,
+                 "X = %4d  Y = %4d",
                  mouseX, mouseY);
     glColor3ub(100, 100, 220);
-    draw_mtxText(a, height - 3 * 24, "X = %4d  Y = %4d",
+    draw_mtxText(textXPos, height - 4 * 24,
+                 "X = %4d  Y = %4d",
                  mouseMotionX, mouseMotionY);
-    draw_mtxText(a, height - 2 * 24, "TIME = %7u",
+    draw_mtxText(textXPos, height - 3 * 24,
+                 "TIME = %7u",
                  SDL_GetTicks());
+    // draw_mtxText(textXPos, height - 2 * 24,
+    //              "FRAME = %7u",
+    //              fpsModule->getCurrentFrame());
+    draw_mtxText(textXPos, height - 2 * 24,
+                 "FPS = %2d",
+                 static_cast<int>(fpsModule->getFPS()));
     //printf("[ret = %u\n",ret););
-
-    counter++;
+    // printf("Tick: %d | Frametime: %.2fms | FPS: %2.0f\n", fpsModule->getCurrentFrame(), fpsModule->getFrameTime(), fpsModule->getFPS());
 }
 
 
@@ -232,7 +247,7 @@ void inline Game::draw_mtxFont(const float x, const float y, const Uint8 c) cons
         for (int n = 0; n < 5; n++)
         {
             if (mtxFont[c][m][n] == '0') continue;
-            
+
             glVertex2f(x + 2 * static_cast<GLfloat>(n), y + 2 * static_cast<GLfloat>(m));
         }
     }

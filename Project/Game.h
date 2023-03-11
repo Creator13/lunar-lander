@@ -1,35 +1,46 @@
 #pragma once
 
 #include <cmath>
+#include <memory>
 #include <stdio.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-class Game
+namespace Game2D
 {
-public:
-    Game();
+    class FPSModule;
+}
 
-    void changeSize(float newWidth, float newHeight);
-    void draw();
+namespace Game2D
+{
+    class Game
+    {
+    public:
+        Game();
 
-    void normalKeys(unsigned char key, int state);
-    void specialKeys(int key, int state);
-    void mouse(int button, int state, int x, int y);
-    void mouseMotion(int x, int y);
+        void changeSize(float newWidth, float newHeight);
+        void draw();
 
-    void initMtxFont() const;
-    void draw_mtxText(float x, float y, const char* fmt, ...);
-    void draw_mtxFont(float x, float y, Uint8 c) const;
+        void normalKeys(unsigned char key, int state);
+        void specialKeys(int key, int state);
+        void mouse(int button, int state, int x, int y);
+        void mouseMotion(int x, int y);
 
-    [[nodiscard]] float getWidth() const { return width; }
-    [[nodiscard]] float getHeight() const { return height; }
-    
-private:
-    float width, height;
-    int counter;
-    int mouseX, mouseY, mouseMotionX, mouseMotionY;
-    int mouseButton, mouseState;
+        void initMtxFont() const;
+        void draw_mtxText(float x, float y, const char* fmt, ...);
+        void draw_mtxFont(float x, float y, Uint8 c) const;
 
-    char (*mtxFont)[7][5];
-};
+        [[nodiscard]] float getWidth() const { return width; }
+        [[nodiscard]] float getHeight() const { return height; }
+
+    private:
+        float width, height;
+        uint64_t frameCounter;
+        uint32_t mouseX, mouseY, mouseMotionX, mouseMotionY;
+        uint32_t mouseButton, mouseState;
+
+        std::shared_ptr<FPSModule> fpsModule;
+
+        char (*mtxFont)[7][5];
+    };
+}
