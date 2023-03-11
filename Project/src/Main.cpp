@@ -1,4 +1,5 @@
 #include "Game.h"
+
 using namespace Game2D;
 
 Game game;
@@ -100,6 +101,7 @@ static void mainLoop()
 
 int main(int argc, char* argv[])
 {
+    
     createSurface();
     game.changeSize(game.getWidth(), game.getHeight());
     glClearColor(0.f, 0.f, 0.2f, 1.f);
