@@ -3,16 +3,16 @@
 //  Linear Algebra, Trigonometry and Geometry, 7.5 c
 //  Uppsala University, Sweden
 
-#include "Game.h"
+#include <SDL_opengl.h>
 
+#include "Game.h"
 #include "FPSModule.h"
 
 using namespace LunarLander;
 
 Game::Game()
+    : time(std::make_unique<FPSModule>(10))
 {
-    fpsModule = std::make_shared<FPSModule>(FPSModule(10));
-
     mtxFont = new char[128][7][5];
     initMtxFont();
 
@@ -46,12 +46,12 @@ void Game::changeSize(const float newWidth, const float newHeight)
 
 void Game::update()
 {
-    lander.update(fpsModule->getDeltaTime());
+    lander.update(time->getDeltaTime());
 }
 
 void Game::draw(void)
 {
-    fpsModule->tick();
+    time->tick();
 
     // Clear
     glClear(GL_COLOR_BUFFER_BIT);
@@ -98,23 +98,9 @@ void Game::draw(void)
     //              fpsModule->getCurrentFrame());
     draw_mtxText(textXPos, height - 2 * 24,
                  "FPS = %2d",
-                 static_cast<int>(fpsModule->getFPS()));
+                 static_cast<int>(time->getFPS()));
     //printf("[ret = %u\n",ret););
     // printf("Tick: %d | Frametime: %.2fms | FPS: %2.0f\n", fpsModule->getCurrentFrame(), fpsModule->getFrameTime(), fpsModule->getFPS());
-}
-
-void Game::normalKeys(const unsigned char key, int state)
-{
-    if (key >= SDLK_0 && key <= SDLK_9) {}
-    if (key == SDLK_RETURN) {}//Return
-}
-
-void Game::specialKeys(const int key, int state)
-{
-    if (key == SDLK_LEFT) {}
-    if (key == SDLK_RIGHT) {}
-    if (key == SDLK_UP) {}
-    if (key == SDLK_DOWN) {}
 }
 
 void Game::mouse(const int button, const int state, const int x, const int y)

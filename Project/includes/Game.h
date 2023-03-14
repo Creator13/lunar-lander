@@ -1,23 +1,19 @@
 #pragma once
 
-#include <cmath>
 #include <memory>
-#include <stdio.h>
 #include <SDL.h>
-#include <SDL_opengl.h>
 
+#include "FPSModule.h"
 #include "Lander.h"
-
-namespace LunarLander
-{
-    class FPSModule;
-}
 
 namespace LunarLander
 {
     class Game
     {
     public:
+        // Modules
+        const std::unique_ptr<FPSModule> time;
+        
         Game();
 
         // Graphics
@@ -26,8 +22,6 @@ namespace LunarLander
         void draw();
 
         // Input
-        void normalKeys(unsigned char key, int state);
-        void specialKeys(int key, int state);
         void mouse(int button, int state, int x, int y);
         void mouseMotion(int x, int y);
 
@@ -45,8 +39,6 @@ namespace LunarLander
         uint64_t frameCounter;
         uint32_t mouseX, mouseY, mouseMotionX, mouseMotionY;
         uint32_t mouseButton, mouseState;
-
-        std::shared_ptr<FPSModule> fpsModule;
 
         // Objects
         Lander lander;

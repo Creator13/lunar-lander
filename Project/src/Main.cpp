@@ -1,4 +1,8 @@
+#include <iostream>
+#include <SDL_opengl.h>
+
 #include "Game.h"
+#include "Input.h"
 
 using namespace LunarLander;
 
@@ -33,7 +37,6 @@ static void mainLoop()
 {
     SDL_Event event;
     bool quit = false;
-    int key, state;
     while (!quit)
     {
         while (SDL_PollEvent(&event))
@@ -59,24 +62,12 @@ static void mainLoop()
                 //Keys
                 case SDL_KEYDOWN:
                 {
-                    key = event.key.keysym.sym;
-                    state = SDL_GetModState();
-
                     // Quit the game via pressing escape
-                    if (key == SDLK_ESCAPE)
+                    if (event.key.keysym.sym == SDLK_ESCAPE)
                     {
                         quit = true;
                         break;
-                    }
-
-                    if (key < 128)
-                    {
-                        game.normalKeys(static_cast<unsigned char>(key), state);
-                    }
-                    else
-                    {
-                        game.specialKeys(key, state);
-                    }
+                    }                    
                     break;
                 }
                 // Quit the game natively (close window etc)
@@ -88,6 +79,8 @@ static void mainLoop()
                 default: break;
             }
         }
+        
+        Input::updateKeyboardInput();
 
         game.update();
         
