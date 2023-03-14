@@ -4,6 +4,7 @@
 #include <SDL_opengl.h>
 
 #include "Input.h"
+#include "worldConstants.h"
 #include "glm/gtx/common.inl"
 
 using namespace LunarLander;
@@ -33,8 +34,8 @@ void Lander::draw() const
     glTranslatef(SQUARE_SIZE * -.5f, SQUARE_SIZE * -.5f, 0);
 
     glBegin(GL_LINE_LOOP);
-    glVertex3f(0.f, 0.f, 0);
-    glVertex3f(SQUARE_SIZE, 0.f, 0);
+    glVertex3f(.2f * SQUARE_SIZE, 0.f, 0);
+    glVertex3f(SQUARE_SIZE * .8f, 0.f, 0);
     glVertex3f(SQUARE_SIZE, SQUARE_SIZE, 0);
     glVertex3f(0.f, SQUARE_SIZE, 0);
     glEnd();
@@ -49,8 +50,9 @@ void Lander::update(const float deltaTime)
         dir = -1;
     if (Input::getRightPressed() && !Input::getLeftPressed())
         dir = 1;
+    
+    rotationDeg = glm::clamp(rotationDeg + dir * deltaTime * 100, -90.f, 90.f);
 
-    rotationDeg+= dir * deltaTime * 100;
-
-    // position += dir * 50 * deltaTime * vec2(1, 0) ;
+    velocity += World::GRAVITY * deltaTime;
+    position += velocity *deltaTime* vec2(0, 1);
 }
