@@ -7,9 +7,8 @@ namespace LunarLander
     {
     public:
         explicit FPSModule(uint32_t updateFrequency);
-        
-        void tick();
 
+        void tick();
 
         [[nodiscard]] float getFPS() const
         {
@@ -21,20 +20,19 @@ namespace LunarLander
             return frameTime;
         }
 
-
         [[nodiscard]] uint32_t getCurrentFrame() const
         {
             return totalFrames;
         }
 
-
         [[nodiscard]] float getDeltaTime() const
         {
             return deltaTime;
         }
+
     private:
         const uint32_t updateFrequency = 500;
-        
+
         float frameTime = 0;
         uint32_t totalFrames = 0;
 

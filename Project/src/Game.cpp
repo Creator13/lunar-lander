@@ -57,7 +57,7 @@ void Game::draw(void)
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 
-    // Geometry
+    // // Geometry
     // glLineWidth(3);
     // glPointSize(10);
     //

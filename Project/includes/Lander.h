@@ -13,8 +13,9 @@ namespace LunarLander
         void update(float deltaTime);
 
     private:
-        float rotationDeg = 0;
         vec2 position = vec2();
+        
+        float rotationDeg = 0;
         vec2 velocity = vec2();
     };
 }
