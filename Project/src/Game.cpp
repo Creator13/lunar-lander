@@ -49,7 +49,7 @@ void Game::update()
     lander.update(time->getDeltaTime());
 }
 
-void Game::draw(void)
+void Game::draw()
 {
     time->tick();
 

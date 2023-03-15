@@ -86,7 +86,6 @@ static void mainLoop()
         
         game.draw();
         SDL_GL_SwapWindow(window);
-        SDL_Delay(8);
     }
 }
 
