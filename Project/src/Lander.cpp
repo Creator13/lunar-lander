@@ -3,6 +3,7 @@
 #include <iostream>
 #include <SDL_opengl.h>
 
+#include "Game.h"
 #include "Input.h"
 #include "worldConstants.h"
 #include "glm/gtx/common.inl"
@@ -12,7 +13,7 @@
 using namespace LunarLander;
 using glm::vec2;
 
-constexpr float SQUARE_SIZE = 40.f;
+constexpr float SQUARE_SIZE = 20.f;
 
 vec2 rotated;
 
@@ -36,8 +37,6 @@ void Lander::draw() const
     glColor3ub(255, 255, 255);
 
     glTranslatef(position.x, position.y, 0);
-    float actualRotation = rotationDeg;
-    if (glm::abs(actualRotation) < 3) actualRotation = 0;
     glRotatef(glm::fmod(actualRotation, 360.f), 0, 0, 1);
     glTranslatef(SQUARE_SIZE * -.5f, SQUARE_SIZE * -.5f, 0);
 
@@ -66,6 +65,10 @@ void Lander::draw() const
     glEnd();
     
     glPopMatrix();
+
+    // Text
+    Game::fontRenderer->draw_mtxText(1000, 20, "HOR. SPEED: %d", static_cast<int>(round(velocity.x)));
+    Game::fontRenderer->draw_mtxText(1000, 50, "VERT. SPEED: %d", static_cast<int>(round(velocity.y)));
 }
 
 void Lander::update(const float deltaTime)
@@ -76,17 +79,20 @@ void Lander::update(const float deltaTime)
     if (Input::getRightPressed() && !Input::getLeftPressed())
         dir = 1;
 
-    rotationDeg = glm::clamp(rotationDeg + dir * deltaTime * 100, -90.f, 90.f);
+    rotationInput = glm::clamp(rotationInput + dir * deltaTime * 100, -90.f, 90.f);
+    
+    actualRotation = rotationInput;
+    if (glm::abs(actualRotation) < 3.5) actualRotation = 0;
 
-    rotated = glm::rotate(vec2(0, -1), glm::radians(rotationDeg));
+    rotated = glm::rotate(vec2(0, -1), glm::radians(actualRotation));
     std::cout << "Rotated fire dir: x" << rotated.x << " y" << rotated.y << std::endl;
 
     if (Input::getFirePressed())
     {
-        velocity += rotated * deltaTime * 33.f;
+        velocity += rotated * deltaTime * 100.f;
     }
 
-    velocity += deltaTime * 1.f * World::GRAVITY;
+    velocity += deltaTime * 15.f * World::GRAVITY;
     // std::cout << "velocity: x" << velocity.x << " y" << velocity.y << std::endl;
     position += deltaTime * velocity;
 }

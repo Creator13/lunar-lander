@@ -5,30 +5,28 @@
 
 #include "FPSModule.h"
 #include "Lander.h"
+#include "MtxFontRenderer.h"
 
 namespace LunarLander
 {
     class Game
     {
     public:
+        inline static std::shared_ptr<MtxFontRenderer> fontRenderer = std::make_unique<MtxFontRenderer>();
+        
         // Modules
         const std::unique_ptr<FPSModule> time;
-        
+
         Game();
 
         // Graphics
         void changeSize(float newWidth, float newHeight);
         void update();
-        void draw();
+        void draw() const;
 
         // Input
         void mouse(int button, int state, int x, int y);
         void mouseMotion(int x, int y);
-
-        // Font
-        void initMtxFont() const;
-        void draw_mtxText(float x, float y, const char* fmt, ...);
-        void draw_mtxFont(float x, float y, Uint8 c) const;
 
         // Getters
         [[nodiscard]] float getWidth() const { return width; }
@@ -42,7 +40,5 @@ namespace LunarLander
 
         // Objects
         Lander lander;
-
-        char (*mtxFont)[7][5];
     };
 }

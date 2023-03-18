@@ -15,7 +15,8 @@ namespace LunarLander
     private:
         glm::vec2 position;
 
-        float rotationDeg = 0;
+        float rotationInput = 0;
+        float actualRotation = 0;
         glm::vec2 velocity;
     };
 }
