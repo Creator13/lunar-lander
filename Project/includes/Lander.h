@@ -1,22 +1,25 @@
 ﻿#pragma once
-#include "glm/vec2.hpp"
+
+#include "Transform.h"
 
 namespace LunarLander
 {
     class Lander
     {
     public:
-        Lander();
+        Transform transform;
         
+        Lander();
+
         void draw() const;
-        void init();
+
+        // void physics();
         void update(float deltaTime);
 
-    private:
-        glm::vec2 position;
+        void init();
 
+    private:
         float rotationInput = 0;
         float actualRotation = 0;
-        glm::vec2 velocity;
     };
 }

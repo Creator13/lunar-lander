@@ -4,6 +4,7 @@
 #include <SDL.h>
 
 #include "FPSModule.h"
+#include "Ground.h"
 #include "Lander.h"
 #include "MtxFontRenderer.h"
 
@@ -19,9 +20,12 @@ namespace LunarLander
 
         Game();
 
+        // Game
+        void update();
+        void physics();
+        
         // Graphics
         void changeSize(float newWidth, float newHeight);
-        void update();
         void draw() const;
 
         // Input
@@ -33,12 +37,15 @@ namespace LunarLander
         [[nodiscard]] float getHeight() const { return height; }
 
     private:
+        static constexpr uint32_t GROUND_HEIGHT = 575;
+        
         float width, height;
-        uint64_t frameCounter;
-        uint32_t mouseX, mouseY, mouseMotionX, mouseMotionY;
-        uint32_t mouseButton, mouseState;
+        uint32_t mouseX = 0, mouseY = 0;
+        uint32_t mouseMotionX = 0, mouseMotionY = 0;
+        uint32_t mouseButton =0, mouseState = 0;
 
         // Objects
         Lander lander;
+        Ground ground;
     };
 }

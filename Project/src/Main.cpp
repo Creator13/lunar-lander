@@ -18,19 +18,22 @@ static void initAttributes()
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);//Depth Buffer 24-bit
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
 }
 
 static void createSurface()
 {
     SDL_Init(SDL_INIT_EVERYTHING);
     initAttributes(); //Context Attr
-    window = SDL_CreateWindow("GFX",
+    window = SDL_CreateWindow("Lunar lander",
                               SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED,
                               static_cast<int>(game.getWidth()), static_cast<int>(game.getHeight()),
                               SDL_WINDOW_OPENGL);
     SDL_GL_CreateContext(window);
     SDL_GL_SetSwapInterval(0);//Enable Vsync
+    glEnable(GL_MULTISAMPLE);
 }
 
 static void mainLoop()
@@ -83,9 +86,11 @@ static void mainLoop()
         Input::updateKeyboardInput();
 
         game.update();
-        
+        game.physics();
         game.draw();
+        
         SDL_GL_SwapWindow(window);
+        // SDL_Delay(200);
     }
 }
 

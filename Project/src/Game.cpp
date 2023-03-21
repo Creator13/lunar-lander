@@ -7,20 +7,16 @@
 
 #include "Game.h"
 #include "FPSModule.h"
+#include "Transform.h"
 
 using namespace LunarLander;
 
 Game::Game()
-    : time(std::make_unique<FPSModule>(10))
+    : time(std::make_unique<FPSModule>(10)),
+      width(1280), height(720),
+      ground(GROUND_HEIGHT)
 {
-    frameCounter = 0;
-    width = 1280;
-    height = 720;
-    mouseX = mouseY = 0;
-    mouseMotionX = mouseMotionY = 0;
-    mouseButton = mouseState = 0;
-
-    lander = Lander();
+    lander.init();
 }
 
 void Game::changeSize(const float newWidth, const float newHeight)
@@ -41,6 +37,18 @@ void Game::changeSize(const float newWidth, const float newHeight)
     glLoadIdentity();
 }
 
+void Game::physics()
+{
+    const float dt = time->getDeltaTime();
+
+    Transform& t = lander.transform;
+    
+    t.applyWorldForces();
+    
+    t.updateVelocity(dt);
+    t.updatePosition(dt);
+}
+
 void Game::update()
 {
     lander.update(time->getDeltaTime());
@@ -54,48 +62,28 @@ void Game::draw() const
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 
-    // // Geometry
-    // glLineWidth(3);
-    // glPointSize(10);
-    //
-    // const int method[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_POLYGON};
-    //
-    // for (int i = 0; i < 5; i++)
-    // {
-    //     glBegin(method[i]);
-    //     const float dx = 200 + 220 * static_cast<float>(i);
-    //     constexpr float dy = 350;
-    //     glColor3ub(255, 0, 0);
-    //     glVertex3f(-50 + dx, -50 + dy, 0);
-    //     glColor3ub(127, 127, 0);
-    //     glVertex3f(-50 + dx, 50 + dy, 0);
-    //     glColor3ub(0, 255, 0);
-    //     glVertex3f(50 + dx, 50 + dy, 0);
-    //     glColor3ub(0, 0, 255);
-    //     glVertex3f(50 + dx, -50 + dy, 0);
-    //     glEnd();
-    // }
     lander.draw();
+    ground.draw();
 
     // Text
     const float textXPos = width - 300;
     glColor3ub(255, 0, 0);
     fontRenderer->draw_mtxText(textXPos, height - 5 * 24,
-                 "X = %4d  Y = %4d",
-                 mouseX, mouseY);
+                               "X = %4d  Y = %4d",
+                               mouseX, mouseY);
     glColor3ub(100, 100, 220);
     fontRenderer->draw_mtxText(textXPos, height - 4 * 24,
-                 "X = %4d  Y = %4d",
-                 mouseMotionX, mouseMotionY);
+                               "X = %4d  Y = %4d",
+                               mouseMotionX, mouseMotionY);
     fontRenderer->draw_mtxText(textXPos, height - 3 * 24,
-                 "TIME = %7u",
-                 SDL_GetTicks());
+                               "TIME = %7u",
+                               SDL_GetTicks());
     // draw_mtxText(textXPos, height - 2 * 24,
     //              "FRAME = %7u",
     //              fpsModule->getCurrentFrame());
     fontRenderer->draw_mtxText(textXPos, height - 2 * 24,
-                 "FPS = %2d",
-                 static_cast<int>(time->getFPS()));
+                               "FPS = %2d",
+                               static_cast<int>(time->getFPS()));
     //printf("[ret = %u\n",ret););
     // printf("Tick: %d | Frametime: %.2fms | FPS: %2.0f\n", fpsModule->getCurrentFrame(), fpsModule->getFrameTime(), fpsModule->getFPS());
 }
@@ -113,4 +101,3 @@ void Game::mouseMotion(const int x, const int y)
     mouseMotionX = x;
     mouseMotionY = y;
 }
-

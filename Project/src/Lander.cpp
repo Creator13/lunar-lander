@@ -5,7 +5,6 @@
 
 #include "Game.h"
 #include "Input.h"
-#include "worldConstants.h"
 #include "glm/gtx/common.inl"
 #include "glm/gtx/rotate_vector.hpp"
 #include "glm/gtx/vector_angle.hpp"
@@ -17,15 +16,14 @@ constexpr float SQUARE_SIZE = 20.f;
 
 vec2 rotated;
 
-Lander::Lander() : position(), velocity()
-{
-    init();
-}
+// Default constructor
+Lander::Lander() = default;
 
 void Lander::init()
 {
-    position = vec2(100, 100);
-    velocity = vec2(10, 0);
+    transform.mass = 500;
+    transform.position = vec2(100, 100);
+    transform.velocity = vec2(55, 0);
 }
 
 void Lander::draw() const
@@ -33,10 +31,10 @@ void Lander::draw() const
     glPushMatrix();
     glLoadIdentity();
 
-    glLineWidth(2);
+    glLineWidth(.5f);
     glColor3ub(255, 255, 255);
 
-    glTranslatef(position.x, position.y, 0);
+    glTranslatef(transform.position.x, transform.position.y, 0);
     glRotatef(glm::fmod(actualRotation, 360.f), 0, 0, 1);
     glTranslatef(SQUARE_SIZE * -.5f, SQUARE_SIZE * -.5f, 0);
 
@@ -49,11 +47,12 @@ void Lander::draw() const
 
     glPopMatrix();
 
+    // Debug
     glPushMatrix();
-    glTranslatef(position.x, position.y, 0);
+    glTranslatef(transform.position.x, transform.position.y, 0);
 
-    glColor3ub(255, 0,0);
-    
+    glColor3ub(255, 0, 0);
+
     glBegin(GL_LINES);
     glVertex3f(0, 0, 0);
     glVertex3f(rotated.x * 40, rotated.y * 40, 0);
@@ -63,12 +62,12 @@ void Lander::draw() const
     glBegin(GL_POINTS);
     glVertex3f(rotated.x * 40, rotated.y * 40, 0);
     glEnd();
-    
+
     glPopMatrix();
 
     // Text
-    Game::fontRenderer->draw_mtxText(1000, 20, "HOR. SPEED: %d", static_cast<int>(round(velocity.x)));
-    Game::fontRenderer->draw_mtxText(1000, 50, "VERT. SPEED: %d", static_cast<int>(round(velocity.y)));
+    Game::fontRenderer->draw_mtxText(1000, 20, "HOR. SPEED: %d", static_cast<int>(round(transform.velocity.x)));
+    Game::fontRenderer->draw_mtxText(1000, 50, "VERT. SPEED: %d", static_cast<int>(round(transform.velocity.y)));
 }
 
 void Lander::update(const float deltaTime)
@@ -80,19 +79,21 @@ void Lander::update(const float deltaTime)
         dir = 1;
 
     rotationInput = glm::clamp(rotationInput + dir * deltaTime * 100, -90.f, 90.f);
-    
+
     actualRotation = rotationInput;
     if (glm::abs(actualRotation) < 3.5) actualRotation = 0;
 
     rotated = glm::rotate(vec2(0, -1), glm::radians(actualRotation));
-    std::cout << "Rotated fire dir: x" << rotated.x << " y" << rotated.y << std::endl;
-
+    // std::cout << "Rotated fire dir: x" << rotated.x << " y" << rotated.y << std::endl;
+    
     if (Input::getFirePressed())
     {
-        velocity += rotated * deltaTime * 100.f;
+        transform.applyForce(rotated * 5000.f);
     }
+    //
+    // velocity += deltaTime * 15.f * World::GRAVITY;
+    // // std::cout << "velocity: x" << velocity.x << " y" << velocity.y << std::endl;
+    // position += deltaTime * velocity;
 
-    velocity += deltaTime * 15.f * World::GRAVITY;
-    // std::cout << "velocity: x" << velocity.x << " y" << velocity.y << std::endl;
-    position += deltaTime * velocity;
+    // 
 }
