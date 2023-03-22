@@ -1,9 +1,8 @@
 ﻿#include "Transform.h"
 
-#include <iostream>
-
 #include "Extensions.h"
 #include "WorldConstants.h"
+#include "glm/detail/func_geometric.inl"
 
 using namespace LunarLander;
 

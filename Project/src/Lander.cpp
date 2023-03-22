@@ -1,10 +1,13 @@
 ﻿#include "Lander.h"
 
+#include <array>
 #include <iostream>
 #include <SDL_opengl.h>
 
 #include "Game.h"
 #include "Input.h"
+#include "..\includes\LanderGraphics.h"
+#include "MathExtras.h"
 #include "glm/gtx/common.inl"
 #include "glm/gtx/rotate_vector.hpp"
 #include "glm/gtx/vector_angle.hpp"
@@ -12,16 +15,14 @@
 using namespace LunarLander;
 using glm::vec2;
 
-constexpr float SQUARE_SIZE = 20.f;
-
-vec2 rotated;
+vec2 rotated; //TODO remove
 
 // Default constructor
 Lander::Lander() = default;
 
 void Lander::init()
 {
-    transform.mass = 500;
+    transform.mass = 750;
     transform.position = vec2(100, 100);
     transform.velocity = vec2(55, 0);
 }
@@ -36,14 +37,12 @@ void Lander::draw() const
 
     glTranslatef(transform.position.x, transform.position.y, 0);
     glRotatef(glm::fmod(actualRotation, 360.f), 0, 0, 1);
-    glTranslatef(SQUARE_SIZE * -.5f, SQUARE_SIZE * -.5f, 0);
+    glTranslatef(LANDER_SIZE * -.5f, LANDER_SIZE * -.5f, 0);
 
-    glBegin(GL_LINE_LOOP);
-    glVertex3f(.2f * SQUARE_SIZE, 0.f, 0);
-    glVertex3f(SQUARE_SIZE * .8f, 0.f, 0);
-    glVertex3f(SQUARE_SIZE, SQUARE_SIZE, 0);
-    glVertex3f(0.f, SQUARE_SIZE, 0);
-    glEnd();
+    DRAW_VECS(Graphics::LANDER_BODY, GL_LINE_STRIP);
+    DRAW_VECS(Graphics::LANDER_BASE, GL_LINE_LOOP);
+    DRAW_VECS(Graphics::LANDER_EXHAUST, GL_LINE_STRIP);
+    DRAW_VECS(Graphics::LANDER_LEGS, GL_LINES);
 
     glPopMatrix();
 
@@ -53,14 +52,16 @@ void Lander::draw() const
 
     glColor3ub(255, 0, 0);
 
+    float mag = -firePower * 40;
+    
     glBegin(GL_LINES);
     glVertex3f(0, 0, 0);
-    glVertex3f(rotated.x * 40, rotated.y * 40, 0);
+    glVertex3f(rotated.x * mag, rotated.y * mag, 0);
     glEnd();
 
     glPointSize(10);
     glBegin(GL_POINTS);
-    glVertex3f(rotated.x * 40, rotated.y * 40, 0);
+    glVertex3f(rotated.x * mag, rotated.y * mag, 0);
     glEnd();
 
     glPopMatrix();
@@ -72,28 +73,40 @@ void Lander::draw() const
 
 void Lander::update(const float deltaTime)
 {
+    // Rotation
     float dir = 0;
     if (Input::getLeftPressed() && !Input::getRightPressed())
         dir = -1;
     if (Input::getRightPressed() && !Input::getLeftPressed())
         dir = 1;
 
+    // Clamp between -90 and 90 deg
     rotationInput = glm::clamp(rotationInput + dir * deltaTime * 100, -90.f, 90.f);
 
+    // sticky at 0
     actualRotation = rotationInput;
-    if (glm::abs(actualRotation) < 3.5) actualRotation = 0;
+    if (glm::abs(actualRotation) < 3.5)
+    {
+        actualRotation = 0;
+    }
 
+    // Force vec direction
     rotated = glm::rotate(vec2(0, -1), glm::radians(actualRotation));
-    // std::cout << "Rotated fire dir: x" << rotated.x << " y" << rotated.y << std::endl;
-    
+
+    // Firing
     if (Input::getFirePressed())
     {
-        transform.applyForce(rotated * 5000.f);
+        fire_t = glm::clamp(fire_t + deltaTime * 25, 0.f, 1.f);
     }
-    //
-    // velocity += deltaTime * 15.f * World::GRAVITY;
-    // // std::cout << "velocity: x" << velocity.x << " y" << velocity.y << std::endl;
-    // position += deltaTime * velocity;
+    else
+    {
+        fire_t = glm::clamp(fire_t - deltaTime * 25, 0.f, 1.f);
+    }
+    
+    firePower = glm::smoothstep(0.f, 1.f, fire_t);
 
-    // 
+    if (firePower > 0)
+    {
+        transform.applyForce(rotated * firePower * maxFirePower);
+    }
 }

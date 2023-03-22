@@ -573,7 +573,9 @@
     <ClInclude Include="includes\Ground.h" />
     <ClInclude Include="includes\Input.h" />
     <ClInclude Include="includes\Lander.h" />
+    <ClInclude Include="includes\LanderGraphics.h" />
     <ClInclude Include="includes\LineRenderer.h" />
+    <ClInclude Include="includes\MathExtras.h" />
     <ClInclude Include="includes\MtxFontRenderer.h" />
     <ClInclude Include="includes\Transform.h" />
     <ClInclude Include="includes\WorldConstants.h" />

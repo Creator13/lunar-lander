@@ -8,7 +8,7 @@ namespace LunarLander
     {
     public:
         Transform transform;
-        
+
         Lander();
 
         void draw() const;
@@ -19,6 +19,12 @@ namespace LunarLander
         void init();
 
     private:
+        const float maxFirePower = 13000;
+        
+        bool firing = false;
+        float fire_t = 0;
+        float firePower = 0;
+        
         float rotationInput = 0;
         float actualRotation = 0;
     };

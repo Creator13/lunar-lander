@@ -2,7 +2,6 @@
 
 #include "glm/vec2.hpp"
 #include "glm/gtc/constants.hpp"
-#include "glm/gtx/optimum_pow.hpp"
 
 namespace LunarLander
 {

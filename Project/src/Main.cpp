@@ -100,5 +100,8 @@ int main(int argc, char* argv[])
     game.changeSize(game.getWidth(), game.getHeight());
     glClearColor(0.f, 0.f, 0.2f, 1.f);
     mainLoop();
+
+    SDL_DestroyWindow(window);
+    
     return 0;
 }
