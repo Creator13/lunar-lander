@@ -150,7 +150,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="includes\Extensions.h" />
-    <ClInclude Include="includes\FPSModule.h" />
+    <ClInclude Include="includes\TimeModule.h" />
     <ClInclude Include="includes\Game.h" />
     <ClInclude Include="includes\glm\common.hpp" />
     <ClInclude Include="includes\glm\detail\compute_common.hpp" />
@@ -582,7 +582,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="includes\glm\detail\glm.cpp" />
-    <ClCompile Include="src\FPSModule.cpp">
+    <ClCompile Include="src\TimeModule.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>

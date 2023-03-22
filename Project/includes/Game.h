@@ -3,10 +3,10 @@
 #include <memory>
 #include <SDL.h>
 
-#include "FPSModule.h"
 #include "Ground.h"
 #include "Lander.h"
 #include "MtxFontRenderer.h"
+#include "TimeModule.h"
 
 namespace LunarLander
 {
@@ -16,7 +16,7 @@ namespace LunarLander
         inline static std::shared_ptr<MtxFontRenderer> fontRenderer = std::make_unique<MtxFontRenderer>();
         
         // Modules
-        const std::unique_ptr<FPSModule> time;
+        const std::unique_ptr<TimeModule> time;
 
         Game();
 

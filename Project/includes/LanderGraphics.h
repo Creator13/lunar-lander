@@ -6,17 +6,18 @@ namespace LunarLander::Graphics
 {
     using glm::vec2;
 
-# define LANDER_SIZE 20.f
+# define LANDER_SIZE 15.f
 
     constexpr float BODY_SIZE = 0.9f;
-    constexpr float BODY_CHAMFER = 0.2f;
+    constexpr float BODY_CHAMFER = 0.20f;
 
     constexpr float BASE_HEIGHT = 0.2f;
     constexpr float BASE_CHAMFER = 0.2f / 3.f;
 
     constexpr float EXHAUST_WIDTH = 1.f / 3.f;
+    constexpr float FLAME_LENGTH = 1.f;
 
-    constexpr float LEGS_HEIGHT = 0.5f;
+    constexpr float LEGS_HEIGHT = 0.4f;
     constexpr float LEGS_TOP_WDT = 2.f / 3.f;
     constexpr float LEGS_BASE = 0.3f;
 
@@ -64,6 +65,15 @@ namespace LunarLander::Graphics
         vec2(.5f + EXHAUST_WIDTH * .4f, 0 + BODY_SIZE + BASE_HEIGHT),
     };
 
+    constexpr std::array LANDER_FLAME
+    {
+        vec2(.5f - EXHAUST_WIDTH * .4f, 0),
+        vec2(.5f - EXHAUST_WIDTH * .25f, FLAME_LENGTH * .6),
+        vec2(.5f, FLAME_LENGTH),
+        vec2(.5f + EXHAUST_WIDTH * .25f, FLAME_LENGTH * .6),
+        vec2(.5f + EXHAUST_WIDTH * .4f, 0),
+    };
+
     constexpr std::array LANDER_LEGS
     {
         // LEFT
@@ -82,7 +92,7 @@ namespace LunarLander::Graphics
     };
 }
 
-#define DRAW_VECS(Arr, Mode)                                    \
+#define DRAW_VERTS(Arr, Mode)                                    \
 glBegin(Mode);                                                  \
 for (const auto& vtx : (Arr)) {                                 \
     glVertex3f(vtx.x * LANDER_SIZE, vtx.y * LANDER_SIZE, 0);    \

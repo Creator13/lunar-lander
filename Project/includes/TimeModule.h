@@ -1,12 +1,13 @@
 ﻿#pragma once
 #include <cstdint>
+#include <SDL_timer.h>
 
 namespace LunarLander
 {
-    class FPSModule
+    class TimeModule
     {
     public:
-        explicit FPSModule(uint32_t updateFrequency);
+        explicit TimeModule(uint32_t updateFrequency);
 
         void tick();
 
@@ -28,6 +29,11 @@ namespace LunarLander
         [[nodiscard]] float getDeltaTime() const
         {
             return deltaTime;
+        }
+
+        [[nodiscard]] static float time()
+        {
+            return static_cast<float>(SDL_GetTicks()) / 1000.f;
         }
 
     private:

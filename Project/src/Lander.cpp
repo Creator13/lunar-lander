@@ -6,8 +6,8 @@
 
 #include "Game.h"
 #include "Input.h"
-#include "..\includes\LanderGraphics.h"
-#include "MathExtras.h"
+#include "LanderGraphics.h"
+#include "glm/gtc/noise.hpp"
 #include "glm/gtx/common.inl"
 #include "glm/gtx/rotate_vector.hpp"
 #include "glm/gtx/vector_angle.hpp"
@@ -39,32 +39,42 @@ void Lander::draw() const
     glRotatef(glm::fmod(actualRotation, 360.f), 0, 0, 1);
     glTranslatef(LANDER_SIZE * -.5f, LANDER_SIZE * -.5f, 0);
 
-    DRAW_VECS(Graphics::LANDER_BODY, GL_LINE_STRIP);
-    DRAW_VECS(Graphics::LANDER_BASE, GL_LINE_LOOP);
-    DRAW_VECS(Graphics::LANDER_EXHAUST, GL_LINE_STRIP);
-    DRAW_VECS(Graphics::LANDER_LEGS, GL_LINES);
+    DRAW_VERTS(Graphics::LANDER_BODY, GL_LINE_STRIP);
+    DRAW_VERTS(Graphics::LANDER_BASE, GL_LINE_LOOP);
+    DRAW_VERTS(Graphics::LANDER_EXHAUST, GL_LINE_STRIP);
+    DRAW_VERTS(Graphics::LANDER_LEGS, GL_LINES);
 
-    glPopMatrix();
-
-    // Debug
-    glPushMatrix();
-    glTranslatef(transform.position.x, transform.position.y, 0);
-
-    glColor3ub(255, 0, 0);
-
-    float mag = -firePower * 40;
+    if (firePower > 0)
+    {
+        glPushMatrix();
+        glTranslatef(0, (Graphics::BASE_HEIGHT * 2 + Graphics::BODY_SIZE) * LANDER_SIZE, 0);
+        glScalef(1, firePower - glm::perlin(vec2(TimeModule::time() * 75.f, 0)) * .3f, 1);
+        // glScalef(1, firePower - (glm::sin(TimeModule::time() * 70) * .5f + 1) * .2f, 1);
+        DRAW_VERTS(Graphics::LANDER_FLAME, GL_LINE_STRIP);
+        glPopMatrix();
+    }
     
-    glBegin(GL_LINES);
-    glVertex3f(0, 0, 0);
-    glVertex3f(rotated.x * mag, rotated.y * mag, 0);
-    glEnd();
-
-    glPointSize(10);
-    glBegin(GL_POINTS);
-    glVertex3f(rotated.x * mag, rotated.y * mag, 0);
-    glEnd();
-
-    glPopMatrix();
+    // glPopMatrix();
+    //
+    // // Debug
+    // glPushMatrix();
+    // glTranslatef(transform.position.x, transform.position.y, 0);
+    //
+    // glColor3ub(255, 0, 0);
+    //
+    // float mag = -firePower * 40;
+    //
+    // glBegin(GL_LINES);
+    // glVertex3f(0, 0, 0);
+    // glVertex3f(rotated.x * mag, rotated.y * mag, 0);
+    // glEnd();
+    //
+    // glPointSize(10);
+    // glBegin(GL_POINTS);
+    // glVertex3f(rotated.x * mag, rotated.y * mag, 0);
+    // glEnd();
+    //
+    // glPopMatrix();
 
     // Text
     Game::fontRenderer->draw_mtxText(1000, 20, "HOR. SPEED: %d", static_cast<int>(round(transform.velocity.x)));
@@ -96,17 +106,17 @@ void Lander::update(const float deltaTime)
     // Firing
     if (Input::getFirePressed())
     {
-        fire_t = glm::clamp(fire_t + deltaTime * 25, 0.f, 1.f);
+        fire_t = glm::clamp(fire_t + deltaTime * 15, 0.f, 1.f);
     }
     else
     {
-        fire_t = glm::clamp(fire_t - deltaTime * 25, 0.f, 1.f);
+        fire_t = glm::clamp(fire_t - deltaTime * 15, 0.f, 1.f);
     }
     
     firePower = glm::smoothstep(0.f, 1.f, fire_t);
 
-    if (firePower > 0)
+    if (Input::getFirePressed())
     {
-        transform.applyForce(rotated * firePower * maxFirePower);
+        transform.applyForce(rotated * maxFirePower);
     }
 }

@@ -1,16 +1,16 @@
-﻿#include "FPSModule.h"
+﻿#include "TimeModule.h"
 #include <SDL_timer.h>
 
 using namespace LunarLander;
 
-FPSModule::FPSModule(const uint32_t updateFrequency)
+TimeModule::TimeModule(const uint32_t updateFrequency)
     : updateFrequency(updateFrequency)
 {
     lastDeltaTimeUpdate = SDL_GetTicks();
     lastFrameTimeUpdate = SDL_GetTicks();
 }
 
-void FPSModule::tick()
+void TimeModule::tick()
 {
     totalFrames++;
 
@@ -18,7 +18,7 @@ void FPSModule::tick()
     updateFrameTime();
 }
 
-void FPSModule::updateFrameTime()
+void TimeModule::updateFrameTime()
 {
     framesSinceUpdate++;
     if (framesSinceUpdate >= updateFrequency)
@@ -30,7 +30,7 @@ void FPSModule::updateFrameTime()
     }
 }
 
-void FPSModule::updateDeltaTime()
+void TimeModule::updateDeltaTime()
 {
     const uint64_t deltaTimeMillis = SDL_GetTicks() - lastDeltaTimeUpdate;
     deltaTime = static_cast<float>(deltaTimeMillis) / 1000.f;

@@ -6,13 +6,13 @@
 #include <SDL_opengl.h>
 
 #include "Game.h"
-#include "FPSModule.h"
+#include "TimeModule.h"
 #include "Transform.h"
 
 using namespace LunarLander;
 
 Game::Game()
-    : time(std::make_unique<FPSModule>(10)),
+    : time(std::make_unique<TimeModule>(10)),
       width(1280), height(720),
       ground(GROUND_HEIGHT)
 {
