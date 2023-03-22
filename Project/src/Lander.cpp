@@ -15,8 +15,6 @@
 using namespace LunarLander;
 using glm::vec2;
 
-vec2 rotated; //TODO remove
-
 // Default constructor
 Lander::Lander() = default;
 
@@ -49,13 +47,12 @@ void Lander::draw() const
         glPushMatrix();
         glTranslatef(0, (Graphics::BASE_HEIGHT * 2 + Graphics::BODY_SIZE) * LANDER_SIZE, 0);
         glScalef(1, firePower - glm::perlin(vec2(TimeModule::time() * 75.f, 0)) * .3f, 1);
-        // glScalef(1, firePower - (glm::sin(TimeModule::time() * 70) * .5f + 1) * .2f, 1);
         DRAW_VERTS(Graphics::LANDER_FLAME, GL_LINE_STRIP);
         glPopMatrix();
     }
     
-    // glPopMatrix();
-    //
+    glPopMatrix();
+    
     // // Debug
     // glPushMatrix();
     // glTranslatef(transform.position.x, transform.position.y, 0);
@@ -101,12 +98,13 @@ void Lander::update(const float deltaTime)
     }
 
     // Force vec direction
-    rotated = glm::rotate(vec2(0, -1), glm::radians(actualRotation));
+    vec2 rotated = glm::rotate(vec2(0, -1), glm::radians(actualRotation));
 
     // Firing
     if (Input::getFirePressed())
     {
         fire_t = glm::clamp(fire_t + deltaTime * 15, 0.f, 1.f);
+        transform.applyForce(rotated * maxFirePower);
     }
     else
     {
@@ -114,9 +112,4 @@ void Lander::update(const float deltaTime)
     }
     
     firePower = glm::smoothstep(0.f, 1.f, fire_t);
-
-    if (Input::getFirePressed())
-    {
-        transform.applyForce(rotated * maxFirePower);
-    }
 }

@@ -58,8 +58,8 @@ static void mainLoop()
                 }
                 case SDL_MOUSEMOTION:
                 {
-                    game.mouseMotion((int)event.button.x,
-                                     (int)event.button.y);
+                    game.mouseMotion(event.button.x,
+                                     event.button.y);
                     break;
                 }
                 //Keys

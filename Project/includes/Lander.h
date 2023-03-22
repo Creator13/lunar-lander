@@ -19,7 +19,7 @@ namespace LunarLander
         void init();
 
     private:
-        const float maxFirePower = 13000;
+        const float maxFirePower = 11000;
         
         bool firing = false;
         float fire_t = 0;

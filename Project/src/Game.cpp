@@ -68,24 +68,12 @@ void Game::draw() const
     // Text
     const float textXPos = width - 300;
     glColor3ub(255, 0, 0);
-    fontRenderer->draw_mtxText(textXPos, height - 5 * 24,
-                               "X = %4d  Y = %4d",
-                               mouseX, mouseY);
-    glColor3ub(100, 100, 220);
-    fontRenderer->draw_mtxText(textXPos, height - 4 * 24,
-                               "X = %4d  Y = %4d",
-                               mouseMotionX, mouseMotionY);
     fontRenderer->draw_mtxText(textXPos, height - 3 * 24,
                                "TIME = %7u",
                                SDL_GetTicks());
-    // draw_mtxText(textXPos, height - 2 * 24,
-    //              "FRAME = %7u",
-    //              fpsModule->getCurrentFrame());
     fontRenderer->draw_mtxText(textXPos, height - 2 * 24,
                                "FPS = %2d",
                                static_cast<int>(time->getFPS()));
-    //printf("[ret = %u\n",ret););
-    // printf("Tick: %d | Frametime: %.2fms | FPS: %2.0f\n", fpsModule->getCurrentFrame(), fpsModule->getFrameTime(), fpsModule->getFPS());
 }
 
 void Game::mouse(const int button, const int state, const int x, const int y)
