@@ -12,9 +12,13 @@ namespace LunarLander
 {
     class Game
     {
+        enum GameState { Starting, Playing, Won, Lost };
+
     public:
+        static constexpr uint32_t GROUND_HEIGHT = 575;
+
         inline static std::shared_ptr<MtxFontRenderer> fontRenderer = std::make_unique<MtxFontRenderer>();
-        
+
         // Modules
         const std::unique_ptr<TimeModule> time;
 
@@ -23,7 +27,8 @@ namespace LunarLander
         // Game
         void update();
         void physics();
-        
+        void checkLanderCollision();
+
         // Graphics
         void changeSize(float newWidth, float newHeight);
         void draw() const;
@@ -35,14 +40,15 @@ namespace LunarLander
         // Getters
         [[nodiscard]] float getWidth() const { return width; }
         [[nodiscard]] float getHeight() const { return height; }
+        [[nodiscard]] GameState getGameState() const { return gameState; }
 
     private:
-        static constexpr uint32_t GROUND_HEIGHT = 575;
-        
+        GameState gameState;
+
         float width, height;
         uint32_t mouseX = 0, mouseY = 0;
         uint32_t mouseMotionX = 0, mouseMotionY = 0;
-        uint32_t mouseButton =0, mouseState = 0;
+        uint32_t mouseButton = 0, mouseState = 0;
 
         // Objects
         Lander lander;

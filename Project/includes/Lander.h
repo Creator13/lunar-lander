@@ -18,14 +18,21 @@ namespace LunarLander
 
         void init();
 
+        void disable();
+
+        [[nodiscard]] float getRotation() const { return actualRotation; }
+
     private:
-        const float maxFirePower = 11000;
+        bool enabled = true;
         
-        bool firing = false;
-        float fire_t = 0;
+        const float maxFirePower = 10000;
+
+        float fireTime = 0;
         float firePower = 0;
-        
+
         float rotationInput = 0;
         float actualRotation = 0;
+
+        float altitude = 0;
     };
 }

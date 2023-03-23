@@ -87,7 +87,7 @@ void MtxFontRenderer::initMtxFont() const
 }
 
 
-void MtxFontRenderer::draw_mtxText(const float x, const float y, const char* fmt, ...)
+void MtxFontRenderer::draw_mtxText(const float x, const float y, const uint32_t scale, const char* fmt, ...) const
 {
     glPushMatrix();
     glLoadIdentity();
@@ -105,12 +105,12 @@ void MtxFontRenderer::draw_mtxText(const float x, const float y, const char* fmt
 #endif
     va_end(ap);
 
-    glPointSize(2.f);
+    glPointSize(2.f * static_cast<float>(scale));
     glBegin(GL_POINTS);
     int n = 0;
     while (text[n] != 0)
     {
-        draw_mtxFont(x + 14.f * static_cast<float>(n), y, text[n]);
+        draw_mtxFont(x + 14.f * static_cast<float>(n * scale), y, scale, text[n]);
         n++;
     }
 
@@ -119,7 +119,12 @@ void MtxFontRenderer::draw_mtxText(const float x, const float y, const char* fmt
     glPopMatrix();
 }
 
-void inline MtxFontRenderer::draw_mtxFont(const float x, const float y, const Uint8 c) const
+float MtxFontRenderer::getPixelWidth(const std::string& str, const int scale = 1)
+{
+    return (static_cast<float>(str.size()) * 14.f - 4.f) * static_cast<float>(scale);
+}
+
+void inline MtxFontRenderer::draw_mtxFont(const float x, const float y, const uint32_t scale, const Uint8 c) const
 {
     if (c == ' ') return;
 
@@ -129,7 +134,7 @@ void inline MtxFontRenderer::draw_mtxFont(const float x, const float y, const Ui
         {
             if (mtxFont[c][m][n] == '0') continue;
 
-            glVertex2f(x + 2 * static_cast<GLfloat>(n), y + 2 * static_cast<GLfloat>(m));
+            glVertex2f(x + 2 * static_cast<GLfloat>(n * scale), y + 2 * static_cast<GLfloat>(m * scale));
         }
     }
 }

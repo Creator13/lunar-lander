@@ -1,6 +1,5 @@
 ﻿#include "Lander.h"
 
-#include <array>
 #include <iostream>
 #include <SDL_opengl.h>
 
@@ -22,7 +21,9 @@ void Lander::init()
 {
     transform.mass = 750;
     transform.position = vec2(100, 100);
-    transform.velocity = vec2(55, 0);
+    transform.velocity = vec2(80, 0);
+    actualRotation = -90;
+    rotationInput = -90;
 }
 
 void Lander::draw() const
@@ -50,36 +51,33 @@ void Lander::draw() const
         DRAW_VERTS(Graphics::LANDER_FLAME, GL_LINE_STRIP);
         glPopMatrix();
     }
-    
+
     glPopMatrix();
-    
-    // // Debug
-    // glPushMatrix();
-    // glTranslatef(transform.position.x, transform.position.y, 0);
-    //
-    // glColor3ub(255, 0, 0);
-    //
-    // float mag = -firePower * 40;
-    //
-    // glBegin(GL_LINES);
-    // glVertex3f(0, 0, 0);
-    // glVertex3f(rotated.x * mag, rotated.y * mag, 0);
-    // glEnd();
-    //
-    // glPointSize(10);
-    // glBegin(GL_POINTS);
-    // glVertex3f(rotated.x * mag, rotated.y * mag, 0);
-    // glEnd();
-    //
-    // glPopMatrix();
+
+    // Debug
+    glPushMatrix();
+    glTranslatef(transform.position.x, transform.position.y, 0);
+
+    glColor3ub(255, 0, 0);
+
+    glPointSize(2);
+    glBegin(GL_POINTS);
+    glVertex3f(0, 0, 0);
+    glEnd();
+
+    glPopMatrix();
 
     // Text
-    Game::fontRenderer->draw_mtxText(1000, 20, "HOR. SPEED: %d", static_cast<int>(round(transform.velocity.x)));
-    Game::fontRenderer->draw_mtxText(1000, 50, "VERT. SPEED: %d", static_cast<int>(round(transform.velocity.y)));
+    glColor3ub(255, 255, 255);
+    Game::fontRenderer->draw_mtxText(1000, 20, 1, "ALTITUDE: %4d", static_cast<int>(altitude));
+    Game::fontRenderer->draw_mtxText(1000, 50, 1, "HOR. SPEED: %d", static_cast<int>(round(transform.velocity.x)));
+    Game::fontRenderer->draw_mtxText(1000, 80, 1, "VERT. SPEED: %d", static_cast<int>(round(transform.velocity.y)));
 }
 
 void Lander::update(const float deltaTime)
 {
+    if (!enabled) return;
+    
     // Rotation
     float dir = 0;
     if (Input::getLeftPressed() && !Input::getRightPressed())
@@ -103,13 +101,23 @@ void Lander::update(const float deltaTime)
     // Firing
     if (Input::getFirePressed())
     {
-        fire_t = glm::clamp(fire_t + deltaTime * 15, 0.f, 1.f);
+        fireTime = glm::clamp(fireTime + deltaTime * 15, 0.f, 1.f);
         transform.applyForce(rotated * maxFirePower);
     }
     else
     {
-        fire_t = glm::clamp(fire_t - deltaTime * 15, 0.f, 1.f);
+        fireTime = glm::clamp(fireTime - deltaTime * 15, 0.f, 1.f);
     }
-    
-    firePower = glm::smoothstep(0.f, 1.f, fire_t);
+
+    firePower = glm::smoothstep(0.f, 1.f, fireTime);
+
+    // Update altitude
+    altitude = static_cast<float>(Game::GROUND_HEIGHT) - transform.position.y - Graphics::landerHeight();
+}
+
+void Lander::disable()
+{
+    enabled = false;
+    fireTime = 0;
+    firePower = 0;
 }

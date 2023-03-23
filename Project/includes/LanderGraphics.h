@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <array>
+
 #include "glm/vec2.hpp"
 
 namespace LunarLander::Graphics
@@ -23,7 +25,12 @@ namespace LunarLander::Graphics
 
     constexpr float landerHeight()
     {
-        return LANDER_SIZE * (BODY_SIZE + BASE_HEIGHT + LEGS_HEIGHT);
+        return LANDER_SIZE * (BODY_SIZE + BASE_HEIGHT + LEGS_HEIGHT) - LANDER_SIZE * .5f;
+    }
+
+    constexpr float landerLegsWidth()
+    {
+        return LANDER_SIZE + LEGS_BASE;
     }
 
     constexpr std::array LANDER_BODY
@@ -92,7 +99,7 @@ namespace LunarLander::Graphics
     };
 }
 
-#define DRAW_VERTS(Arr, Mode)                                    \
+#define DRAW_VERTS(Arr, Mode)                                   \
 glBegin(Mode);                                                  \
 for (const auto& vtx : (Arr)) {                                 \
     glVertex3f(vtx.x * LANDER_SIZE, vtx.y * LANDER_SIZE, 0);    \

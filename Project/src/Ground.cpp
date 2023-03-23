@@ -9,7 +9,7 @@ void Ground::draw() const
     glPushMatrix();
     glLoadIdentity();
 
-    glLineWidth(2);
+    glLineWidth(.5f);
     glColor3ub(200, 200, 255);
     
     glTranslatef(0, static_cast<float>(zeroAltitude), 0);

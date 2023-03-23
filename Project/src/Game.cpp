@@ -6,8 +6,13 @@
 #include <SDL_opengl.h>
 
 #include "Game.h"
+
+#include <iostream>
+
+#include "LanderGraphics.h"
 #include "TimeModule.h"
 #include "Transform.h"
+#include "glm/gtx/rotate_vector.hpp"
 
 using namespace LunarLander;
 
@@ -17,6 +22,7 @@ Game::Game()
       ground(GROUND_HEIGHT)
 {
     lander.init();
+    gameState = Playing;
 }
 
 void Game::changeSize(const float newWidth, const float newHeight)
@@ -42,38 +48,64 @@ void Game::physics()
     const float dt = time->getDeltaTime();
 
     Transform& t = lander.transform;
-    
+
     t.applyWorldForces();
-    
+
     t.updateVelocity(dt);
     t.updatePosition(dt);
 }
 
 void Game::update()
 {
-    lander.update(time->getDeltaTime());
+    time->tick();
+
+    checkLanderCollision();
+
+    if (gameState == Playing)
+    {
+        lander.update(time->getDeltaTime());
+
+        physics();
+    }
+    draw();
 }
 
 void Game::draw() const
 {
-    time->tick();
-
     // Clear
     glClear(GL_COLOR_BUFFER_BIT);
     glLoadIdentity();
 
-    lander.draw();
     ground.draw();
+    if (gameState != Lost)
+    {
+        lander.draw();
+    }
 
     // Text
     const float textXPos = width - 300;
     glColor3ub(255, 0, 0);
-    fontRenderer->draw_mtxText(textXPos, height - 3 * 24,
+    fontRenderer->draw_mtxText(textXPos, height - 3 * 24, 1,
                                "TIME = %7u",
                                SDL_GetTicks());
-    fontRenderer->draw_mtxText(textXPos, height - 2 * 24,
-                               "FPS = %2d",
+    fontRenderer->draw_mtxText(textXPos, height - 2 * 24, 1,
+                               "FPS = %4u",
                                static_cast<int>(time->getFPS()));
+
+    // Lost/won
+    glColor3ub(250, 250, 250);
+    switch (gameState)
+    {
+        case Won:
+            fontRenderer->draw_mtxText((getWidth() - MtxFontRenderer::getPixelWidth("won", 5)) * .5f, 300, 5, "WON");
+            break;
+        case Lost:
+            fontRenderer->draw_mtxText((getWidth() - MtxFontRenderer::getPixelWidth("Lost", 5)) * .5f, 300, 5, "LOST");
+            break;
+        case Starting:
+        case Playing:
+            break;
+    }
 }
 
 void Game::mouse(const int button, const int state, const int x, const int y)
@@ -88,4 +120,30 @@ void Game::mouseMotion(const int x, const int y)
 {
     mouseMotionX = x;
     mouseMotionY = y;
+}
+
+void Game::checkLanderCollision()
+{
+    using glm::vec2;
+    auto leftLeg = vec2(-(Graphics::LEGS_BASE * .5f) * LANDER_SIZE - .5f * LANDER_SIZE, Graphics::landerHeight());
+    auto rightLeg = vec2((1 + Graphics::LEGS_BASE * .5f) * LANDER_SIZE - .5f * LANDER_SIZE, Graphics::landerHeight());
+
+    leftLeg = glm::rotate(leftLeg, glm::radians(lander.getRotation()));
+    rightLeg = glm::rotate(rightLeg, glm::radians(lander.getRotation()));
+
+    leftLeg += lander.transform.position;
+    rightLeg += lander.transform.position;
+
+    if (glm::max(leftLeg.y, rightLeg.y) > static_cast<float>(GROUND_HEIGHT))
+    {
+        if (length(lander.transform.velocity) < 7.5f && glm::abs(lander.getRotation()) < 15)
+        {
+            gameState = Won;
+            lander.disable();
+        }
+        else
+        {
+            gameState = Lost;
+        }
+    }
 }
