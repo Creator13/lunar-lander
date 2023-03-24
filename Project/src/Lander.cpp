@@ -19,9 +19,9 @@ Lander::Lander() = default;
 
 void Lander::init()
 {
-    transform.mass = 750;
-    transform.position = vec2(100, 100);
-    transform.velocity = vec2(80, 0);
+    rigidbody.mass = 750;
+    rigidbody.position = vec2(100, 100);
+    rigidbody.velocity = vec2(80, 0);
     actualRotation = -90;
     rotationInput = -90;
 }
@@ -34,7 +34,7 @@ void Lander::draw() const
     glLineWidth(.5f);
     glColor3ub(255, 255, 255);
 
-    glTranslatef(transform.position.x, transform.position.y, 0);
+    glTranslatef(rigidbody.position.x, rigidbody.position.y, 0);
     glRotatef(glm::fmod(actualRotation, 360.f), 0, 0, 1);
     glTranslatef(LANDER_SIZE * -.5f, LANDER_SIZE * -.5f, 0);
 
@@ -56,7 +56,7 @@ void Lander::draw() const
 
     // Debug
     glPushMatrix();
-    glTranslatef(transform.position.x, transform.position.y, 0);
+    glTranslatef(rigidbody.position.x, rigidbody.position.y, 0);
 
     glColor3ub(255, 0, 0);
 
@@ -70,8 +70,8 @@ void Lander::draw() const
     // Text
     glColor3ub(255, 255, 255);
     Game::fontRenderer->draw_mtxText(1000, 20, 1, "ALTITUDE: %4d", static_cast<int>(altitude));
-    Game::fontRenderer->draw_mtxText(1000, 50, 1, "HOR. SPEED: %d", static_cast<int>(round(transform.velocity.x)));
-    Game::fontRenderer->draw_mtxText(1000, 80, 1, "VERT. SPEED: %d", static_cast<int>(round(transform.velocity.y)));
+    Game::fontRenderer->draw_mtxText(1000, 50, 1, "HOR. SPEED: %d", static_cast<int>(round(rigidbody.velocity.x)));
+    Game::fontRenderer->draw_mtxText(1000, 80, 1, "VERT. SPEED: %d", static_cast<int>(round(rigidbody.velocity.y)));
 }
 
 void Lander::update(const float deltaTime)
@@ -88,7 +88,7 @@ void Lander::update(const float deltaTime)
     // Clamp between -90 and 90 deg
     rotationInput = glm::clamp(rotationInput + dir * deltaTime * 100, -90.f, 90.f);
 
-    // sticky at 0
+    // sticky around 0
     actualRotation = rotationInput;
     if (glm::abs(actualRotation) < 3.5)
     {
@@ -96,13 +96,13 @@ void Lander::update(const float deltaTime)
     }
 
     // Force vec direction
-    vec2 rotated = glm::rotate(vec2(0, -1), glm::radians(actualRotation));
+    const vec2 rotated = glm::rotate(vec2(0, -1), glm::radians(actualRotation));
 
     // Firing
     if (Input::getFirePressed())
     {
         fireTime = glm::clamp(fireTime + deltaTime * 15, 0.f, 1.f);
-        transform.applyForce(rotated * maxFirePower);
+        rigidbody.applyForce(rotated * maxFirePower);
     }
     else
     {
@@ -112,7 +112,7 @@ void Lander::update(const float deltaTime)
     firePower = glm::smoothstep(0.f, 1.f, fireTime);
 
     // Update altitude
-    altitude = static_cast<float>(Game::GROUND_HEIGHT) - transform.position.y - Graphics::landerHeight();
+    altitude = static_cast<float>(Game::GROUND_HEIGHT) - rigidbody.position.y - Graphics::landerHeight();
 }
 
 void Lander::disable()

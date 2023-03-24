@@ -5,10 +5,10 @@
 
 namespace LunarLander
 {
-    struct Transform
+    struct RigidBody
     {
         // Init an empty body with a mass and position (default to 1 and (0,0)) and a velocity of 0.
-        explicit Transform(const float mass = 1, const glm::vec2 pos = glm::zero<glm::vec2>())
+        explicit RigidBody(const float mass = 1, const glm::vec2 pos = glm::zero<glm::vec2>())
             : mass(mass),
               position(pos),
               velocity(glm::zero<glm::vec2>()) { }

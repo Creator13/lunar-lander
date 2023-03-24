@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-#include "Transform.h"
+#include "RigidBody.h"
 
 namespace LunarLander
 {
     class Lander
     {
     public:
-        Transform transform;
+        RigidBody rigidbody;
 
         Lander();
 

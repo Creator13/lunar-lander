@@ -1,4 +1,4 @@
-﻿#include "Transform.h"
+﻿#include "RigidBody.h"
 
 #include "Extensions.h"
 #include "WorldConstants.h"
@@ -6,7 +6,7 @@
 
 using namespace LunarLander;
 
-void Transform::updateVelocity(const float dt)
+void RigidBody::updateVelocity(const float dt)
 {
     // a = m / F
     // v += a * dt
@@ -14,18 +14,18 @@ void Transform::updateVelocity(const float dt)
     force = glm::zero<glm::vec2>();
 }
 
-void Transform::updatePosition(const float dt)
+void RigidBody::updatePosition(const float dt)
 {
     // x += v * dt
     position += velocity * dt;
 }
 
-void Transform::applyForce(const glm::vec2& addForce)
+void RigidBody::applyForce(const glm::vec2& addForce)
 {
     this->force += addForce;
 }
 
-void Transform::applyWorldForces()
+void RigidBody::applyWorldForces()
 {
     const glm::vec2 f_weight = mass * World::GRAVITY;
     const glm::vec2 f_drag = .5f * World::RESISTANCE * (velocity * velocity) * normalize(velocity);

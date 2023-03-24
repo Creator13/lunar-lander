@@ -11,7 +11,7 @@
 
 #include "LanderGraphics.h"
 #include "TimeModule.h"
-#include "Transform.h"
+#include "RigidBody.h"
 #include "glm/gtx/rotate_vector.hpp"
 
 using namespace LunarLander;
@@ -47,7 +47,7 @@ void Game::physics()
 {
     const float dt = time->getDeltaTime();
 
-    Transform& t = lander.transform;
+    RigidBody& t = lander.rigidbody;
 
     t.applyWorldForces();
 
@@ -131,12 +131,12 @@ void Game::checkLanderCollision()
     leftLeg = glm::rotate(leftLeg, glm::radians(lander.getRotation()));
     rightLeg = glm::rotate(rightLeg, glm::radians(lander.getRotation()));
 
-    leftLeg += lander.transform.position;
-    rightLeg += lander.transform.position;
+    leftLeg += lander.rigidbody.position;
+    rightLeg += lander.rigidbody.position;
 
     if (glm::max(leftLeg.y, rightLeg.y) > static_cast<float>(GROUND_HEIGHT))
     {
-        if (length(lander.transform.velocity) < 7.5f && glm::abs(lander.getRotation()) < 15)
+        if (length(lander.rigidbody.velocity) < 7.5f && glm::abs(lander.getRotation()) < 15)
         {
             gameState = Won;
             lander.disable();

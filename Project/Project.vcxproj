@@ -577,7 +577,7 @@
     <ClInclude Include="includes\LineRenderer.h" />
     <ClInclude Include="includes\MathExtras.h" />
     <ClInclude Include="includes\MtxFontRenderer.h" />
-    <ClInclude Include="includes\Transform.h" />
+    <ClInclude Include="includes\RigidBody.h" />
     <ClInclude Include="includes\WorldConstants.h" />
   </ItemGroup>
   <ItemGroup>
@@ -1176,7 +1176,7 @@
       <AdditionalModuleDependencies>../glm/glm</AdditionalModuleDependencies>
       <LinkCompiled>true</LinkCompiled>
     </ClCompile>
-    <ClCompile Include="src\Transform.cpp">
+    <ClCompile Include="src\RigidBody.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <Optimization>Disabled</Optimization>
